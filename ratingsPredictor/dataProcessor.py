@@ -10,7 +10,9 @@ def runProcessingSuite(df):
 
     reducedDfRenamed = reducedDf.rename(columns=renamedColumnNames())
 
-    processedDf = reducedDfRenamed.dropna()
+    noDashesDf = reducedDfRenamed.replace(to_replace='-', value=None)
+
+    processedDf = noDashesDf.dropna()
 
     return processedDf
 
@@ -38,6 +40,3 @@ def renamedColumnNames():
             'Prelim: Avg': 'prelimAvg',
             'Final': 'finalNumber',
             'Prelim to final adjustment': 'prelimToFinalAdjustment'}
-
-    def removePreemptedRows():
-        print('Removing Preempted Rows')
