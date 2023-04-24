@@ -8,12 +8,12 @@ def runProcessingSuite(df):
 
     reducedDf = removeExtraColumns(df, keepCols)
 
-    reducedDfRenamed = reducedDf.rename(columns=renamedColumnNames())
-
-    noDashesDf = reducedDfRenamed.replace(to_replace='-', value=None)
-
-    processedDf = noDashesDf.dropna()
-
+    processedDf = (
+        reducedDf
+        .rename(columns=renamedColumnNames())
+        .replace(to_replace='-', value=None)
+        .dropna()
+    )
     return processedDf
 
 
