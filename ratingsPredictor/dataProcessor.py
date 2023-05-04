@@ -4,39 +4,68 @@ import pandas as pd
 def runProcessingSuite(df):
     print('Running Processing Suit')
 
-    keepCols = columnsToBeKept()
+    keepCols = getColumnsToBeKept()
+    columnTypes = getColumnTypes()
 
     reducedDf = removeExtraColumns(df, keepCols)
 
-    processedDf = (
-        reducedDf
-        .rename(columns=renamedColumnNames())
-        .replace(to_replace='-', value=None)
-        .dropna()
-    )
-    return processedDf
+    processedDf = performDataFrameProcessing(reducedDf, columnTypes)
+
+    ratingsColumns = getRatingsColumns()
+
+    fullyProcessedDf = performRatingsProcessing(processedDf, ratingsColumns)
+
+    return fullyProcessedDf
 
 
-def readCSVDataFile(filePath=None):
-    print('Reading CSV Data at:', filePath)
+def performRatingsProcessing(df, ratingsColumns):
+    df[ratingsColumns] = df[ratingsColumns].apply(addMillions)
 
-    df = pd.read_csv(filePath)
+    return df.assign(prelimToFinalDifference=lambda x: x.finalNumber - x.prelimAvg)
 
-    return df
+
+def addMillions(rating):
+    return rating * 1000
 
 
 def removeExtraColumns(df, keepColumns):
     return df[keepColumns]
 
 
-def columnsToBeKept():
-    return ['Date', 'Prelim: 8pm', 'Prelim: 9pm', 'Prelim: Avg', 'Final', 'Prelim to final adjustment']
+def performDataFrameProcessing(df, columnTypes):
+    return (
+        df
+        .rename(columns=getRenamedColumnNames())
+        .replace(to_replace='-', value=None)
+        .replace(to_replace=',', value='', regex=True)
+        .dropna()
+        .astype(columnTypes)
+    )
 
 
-def renamedColumnNames():
-    return {'Date': 'date',
-            'Prelim: 8pm': 'prelim8PM',
-            'Prelim: 9pm': 'prelim9PM',
-            'Prelim: Avg': 'prelimAvg',
-            'Final': 'finalNumber',
-            'Prelim to final adjustment': 'prelimToFinalAdjustment'}
+def getRatingsColumns():
+    return ['prelim8PM', 'prelim9PM', 'prelimAvg', 'finalNumber']
+
+
+def getColumnsToBeKept():
+    return ['Date', 'Prelim: 8pm', 'Prelim: 9pm', 'Prelim: Avg', 'Final']
+
+
+def getRenamedColumnNames():
+    return {
+        'Date': 'date',
+        'Prelim: 8pm': 'prelim8PM',
+        'Prelim: 9pm': 'prelim9PM',
+        'Prelim: Avg': 'prelimAvg',
+        'Final': 'finalNumber',
+    }
+
+
+def getColumnTypes():
+    return {
+        'date': 'datetime64',
+        'prelim8PM': 'int32',
+        'prelim9PM': 'int32',
+        'prelimAvg': 'int32',
+        'finalNumber': 'int32',
+    }

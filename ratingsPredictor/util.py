@@ -1,5 +1,7 @@
 import os
 
+import pandas as pd
+
 
 def getDataDirectoryPath():
     cwd = os.getcwd()
@@ -12,3 +14,9 @@ def getDataDirectoryPath():
     return dataDir
 
 
+def readCSVDataFile(filePath=None):
+    print('Reading CSV Data at:', filePath)
+
+    df = pd.read_csv(filePath)
+
+    return df

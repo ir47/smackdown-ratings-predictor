@@ -1,5 +1,5 @@
-from dataProcessor import readCSVDataFile, runProcessingSuite
-from ratingsPredictor.util import getDataDirectoryPath
+from dataProcessor import runProcessingSuite
+from ratingsPredictor.util import getDataDirectoryPath, readCSVDataFile
 
 
 def main():
