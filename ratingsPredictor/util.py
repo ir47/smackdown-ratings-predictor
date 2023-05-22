@@ -1,6 +1,8 @@
 import os
 
 import pandas as pd
+from sklearn.feature_selection import SelectKBest
+from sklearn.feature_selection import chi2
 
 
 def getDataDirectoryPath():
@@ -20,6 +22,33 @@ def readCSVDataFile(filePath=None):
     df = pd.read_csv(filePath)
 
     return df
+
+
+def setDisplayMaxColumns(maxColumns=None):
+    pd.set_option('display.max_columns', maxColumns)
+
+
+def runFeatureSelection(df, featureColumns, targetColumn, indexesRequired=True):
+    print('Running Feature Selection')
+
+    if indexesRequired:
+        featureColumns = df.columns.get_indexer(featureColumns)
+        targetColumn = df.columns.get_indexer(targetColumn)
+
+    X = df.iloc[:, featureColumns]
+    Y = df.iloc[:, targetColumn]
+
+    best_features = SelectKBest(score_func=chi2, k=3)
+    fit = best_features.fit(X, Y)
+
+    df_scores = pd.DataFrame(fit.scores_)
+    df_columns = pd.DataFrame(X.columns)
+
+    features_scores = pd.concat([df_columns, df_scores], axis=1)
+    features_scores.columns = ['Features', 'Score']
+    features_scores.sort_values(by='Score')
+
+    print(features_scores.head())
 
 
 def getRatingsColumns():
@@ -49,3 +78,9 @@ def getColumnTypes():
         'finalNumber': 'int32',
     }
 
+
+def getModelColumnInputs():
+    return {
+        'featureColumns': ['prelim8PM', 'prelim9PM', 'prelimAvg', 'prelimToFinalDifference'],
+        'targetColumn': ['finalNumber']
+    }

@@ -21,7 +21,7 @@ def runProcessingSuite(df):
 def performRatingsProcessing(df, ratingsColumns):
     df[ratingsColumns] = df[ratingsColumns].apply(addMillions)
 
-    return df.assign(prelimToFinalDifference=lambda x: x.finalNumber - x.prelimAvg)
+    return df.assign(prelimToFinalDifference=lambda x: abs(x.finalNumber - x.prelimAvg))
 
 
 def addMillions(rating):
