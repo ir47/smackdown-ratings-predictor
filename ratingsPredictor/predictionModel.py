@@ -1,6 +1,7 @@
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import train_test_split
 
+from ratingsPredictor.dataVisualisation import plotPredictedVsActual
 from ratingsPredictor.util import getModelColumnInputs
 
 
@@ -27,3 +28,5 @@ def runPredictionModel(df):
     X_test['predictedRating'] = y_pred.tolist()
 
     print(X_test)
+
+    plotPredictedVsActual(X_test)

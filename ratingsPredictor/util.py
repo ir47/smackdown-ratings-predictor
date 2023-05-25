@@ -71,7 +71,7 @@ def getRenamedColumnNames():
 
 def getColumnTypes():
     return {
-        'date': 'datetime64',
+        'date': 'datetime64[ns]',
         'prelim8PM': 'int32',
         'prelim9PM': 'int32',
         'prelimAvg': 'int32',
